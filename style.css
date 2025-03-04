@@ -1,0 +1,58 @@
+body {
+    /* Set line height to 1.5 times the font size
+         and use the OS’s UI font as the website font
+       */
+    font: 100%/1.5 system-ui;
+    margin-inline: auto;
+    margin-inline: max(1em, (100% - 80ch) / 2);
+
+
+}
+center{
+    background-color: blue;
+    width: 100px;
+}
+H1{
+    font-size: 30px;
+    font-weight: bold;
+}
+
+dt {
+    font-size: 25px;
+    font-family: 'Times New Roman', Times, serif;
+}
+.intro{
+    width: 100%;
+}
+.wrapper{
+    margin-top: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    
+}
+#chart{
+    width: 750px;
+    margin-top: 1em;
+}
+
+.grid line {
+    stroke: lightgray;
+    stroke-opacity: 0.7;
+    shape-rendering: crispEdges;
+}
+.grid path {
+    stroke-width: 0;
+}
+dl {
+    margin-top: -130px;
+}
+p {
+    margin-top: -15px;
+    font-size: 15px;
+    color: rgb(87, 87, 87);
+    font-family: 'Times New Roman', Times, serif;
+
+}
+
