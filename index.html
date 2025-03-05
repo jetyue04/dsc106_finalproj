@@ -4,24 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
-    <title>Calwin Li: Personal site and portfolio</title>
+    <title>Visualizing Mice Colony</title>
 </head>
 <body>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="intro.js", type = 'module' ></script>
+    <script src="chart2.js", type = 'module' ></script>
     
     <div class = 'wrapper'>
         <div class = 'intro'>
             <H1> Visualizing Mice Colony</H1>
-            <p> An exploration of a small mouse colony</p>
+            <p> An Exploration of Mice Body Temperature</p>
         </div>
         <img src = './images/mousee.jpg', style="width: 400px; margin: 60px;">
     </div>
     <p>
-        Introduction, some text about mice idk
+        Mice are a common model organism in biology. They are small, easy to keep, and reproduce quickly. This makes them ideal for studying genetics, behavior, and disease. In this project, we will explore core body temperature and activity levels in a mice. We will use data visualization to better understand the data and draw conclusions from it.
     </p>
 
-    <h2> A peek into the colony</h2>
+    <h2> A Peek Into the Colony</h2>
     <p>
         Over 14 days, a group of 26 mice (13 male, 13 feamale) had activity and tempreature levels recorded. Here is a a peek at their tempreature levels averaged over the four days. Click on individual line for more information:
     </p>
@@ -32,8 +33,53 @@
     </div>
 
     <div id="chart"></div>
-    <h2> Section 2, idk</h2>
+    <h2> Temperature Variation: Which gender is more stable?</h2>
 
+    <div id="chart2"></div>
 
+    <p>
+        The way that we recorded variance is that we graphed each individual 
+        mouse from both the male and female. Then we grouped by gender and 
+        subtracted the male data by the male mean, and also the female data 
+        by the female male in order for both lines to be around y=0. And with 
+        this visualization, we see that the male mice differ a lot more from 
+        its respective mean than the female mice.
+    </p>
+    
+    <h2> Write-up:</h2>
+
+    <p class = 'write-up'>
+        So far, we have brainstormed various ideas for visualizing the variance 
+        in body temperature. We considered using heat maps, histograms, and box 
+        plots. However, we decided to stick with line graphs and add animations 
+        to them. Our plan is to apply an absolute value to the variance line plot 
+        and calculate the area under the curve to determine which variance is 
+        higher. This will help us draw conclusions from the data. Additionally, 
+        we consulted Professor Ben Smarr, who provided insights from his own 
+        research on the topic. He explained his methods and findings, which 
+        showed that female mice have less variance in body temperature compared 
+        to male mice.
+    </p>
+
+    <p class = 'write-up'>
+        One of the most challenging aspects of this project will be animating 
+        the line graph to show the area under the curve over time. We aim to 
+        illustrate how the difference between the two genders increases as time 
+        progresses. Additionally, we want to present the area under the curve in
+        a clear and comprehensible manner, avoiding the appearance of a typical 
+        line plot. Another issue we encountered was selecting an appropriate 
+        color scheme for the variance plot. Due to the significant amount of 
+        noise, any combination involving blue and another color tended to look 
+        cluttered. Thus, another challenge is to ensure the visualization is both 
+        aesthetically pleasing and user-friendly. Furthermore, we plan to enhance 
+        the interactivity of the first graph. Currently, when a line is clicked, 
+        it remains a light color unless hovered over. We intend to modify this 
+        behavior so that the line changes to a darker color upon selection, 
+        improving the overall user experience.
+    </p>
+    <p> 
+
+        
+    </p>
 </body>
 </html>

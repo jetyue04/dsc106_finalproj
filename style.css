@@ -36,6 +36,10 @@ dt {
     width: 750px;
     margin-top: 1em;
 }
+#chart{
+    width: 750px;
+    margin-top: 1em;
+}
 
 .grid line {
     stroke: lightgray;
@@ -54,6 +58,11 @@ p {
     color: rgb(87, 87, 87);
     font-family: 'Times New Roman', Times, serif;
 
+}
+.write-up{
+    margin-bottom: 2em;
+    font-size: 15px;
+    font-family: 'Times New Roman', Times, serif;
 }
 #stats-display{
     background-color: white;
