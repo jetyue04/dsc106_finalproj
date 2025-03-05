@@ -244,12 +244,12 @@ function createScatterplot(){
         // Redraw axes
         svg.select('.x-axis')
             .transition()
-            .duration(0)
+            .duration(500)
             .call(d3.axisBottom(xScale).tickFormat(d3.timeFormat("%I:%M %p")));
 
         svg.select('.y-axis')
             .transition()
-            .duration(0)
+            .duration(500)
             .call(d3.axisLeft(yScale));
 
         // Redraw the line with new scales
@@ -259,7 +259,7 @@ function createScatterplot(){
 
         svg.select(`.line-${mouse}`)
             .transition()
-            .duration(0)
+            .duration(500)
             .attr('d', updatedLine(lineData));
     }
 
@@ -277,12 +277,12 @@ function createScatterplot(){
         // Redraw axes
         svg.select('.x-axis')
             .transition()
-            .duration(0)
+            .duration(500)
             .call(d3.axisBottom(xScale).tickFormat(d3.timeFormat("%I:%M %p")));
 
         svg.select('.y-axis')
             .transition()
-            .duration(0)
+            .duration(500)
             .call(d3.axisLeft(yScale));
 
         // Redraw all lines with original scales
@@ -297,7 +297,7 @@ function createScatterplot(){
         mouseGroups.forEach((values, mouse) => {
             svg.select(`.line-${mouse}`)
                 .transition()
-                .duration(0)
+                .duration(500)
                 .attr('d', resetLine(values));
         });
     }
