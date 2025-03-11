@@ -136,9 +136,12 @@ function createScatterplot() {
 
         // Add focus line for tooltip
         const focusLine = svg.append("line")
-            .attr("class", "focusLine")
-            .attr("stroke", "black")
-            .attr("stroke-dasharray", "3,3")
+            .attr("class", "hover-line")
+            .attr("y1", 0)
+            .attr("y2", height)
+            .style("stroke", "#999")
+            .style("stroke-width", 1)
+            .style("stroke-dasharray", "5,5")
             .style("opacity", 0);
 
         // Add data points for better interaction
