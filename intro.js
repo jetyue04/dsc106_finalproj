@@ -180,6 +180,7 @@ function createScatterplot(){
             .style('stroke-opacity', '0.3')
             .style('stroke-width', 3)
             .style('cursor', 'pointer')
+            .attr('data-color', color)  // Store the color as a data attribute
             .on('click', function(event) {
                 // Prevent event from bubbling to parent SVG
                 event.stopPropagation();
@@ -208,10 +209,13 @@ function createScatterplot(){
                     .style('top', `${event.pageY - 28}px`);
             })
             .on('mouseout', function() {
-                d3.select(this)
-                    .style('stroke-width', 3)
-                    .style('stroke', color)
-                    .style('stroke-opacity', 0.3);
+                // Only reduce opacity if not in zoomed state
+                if (!d3.select(this).classed('zoomed')) {
+                    d3.select(this)
+                        .style('stroke-width', 3)
+                        .style('stroke', color)
+                        .style('stroke-opacity', 0.3);
+                }
                 tooltip.style('visibility', 'hidden');
             });
     });
@@ -219,13 +223,15 @@ function createScatterplot(){
     function zoomToLine(lineData, mouse) {
         // Hide all lines
         svg.selectAll('.line')
-            .style('display', 'none');
+            .style('display', 'none')
+            .classed('zoomed', false);
 
-        // Show only the clicked line
-        svg.select(`.line-${mouse}`)
+    // Show only the clicked line
+        const selectedLine = svg.select(`.line-${mouse}`)
             .style('display', 'block')
             .style('stroke-width', 5)
-            .style('stroke-opacity', 1);
+            .style('stroke-opacity', 1)
+            .classed('zoomed', true);
 
         // Calculate min and max temp for y-axis
         const temps = lineData.map(d => parseFloat(d.temp));
@@ -262,13 +268,15 @@ function createScatterplot(){
             .duration(500)
             .attr('d', updatedLine(lineData));
     }
+        
 
     function resetZoom() {
         // Show all lines
         svg.selectAll('.line')
             .style('display', 'block')
-            .style('stroke-width', 4)
-            .style('stroke-opacity', 0.3);
+            .style('stroke-width', 3)
+            .style('stroke-opacity', 0.3)
+            .classed('zoomed', false);
 
         // Reset scales
         xScale.domain(originalXDomain);
