@@ -67,10 +67,15 @@ function createScatterplot(){
             }
         });
 
+    // xScale = d3
+    //     .scaleTime()
+    //     .domain([new Date(0, 0, 0, 0, 0), new Date(0, 0, 3, 23, 55)])  // 0-287 intervals, 24 hours
+    //     .range([0, width]);
+
     xScale = d3
-        .scaleTime()
-        .domain([new Date(0, 0, 0, 0, 0), new Date(0, 0, 3, 23, 55)])  // 0-287 intervals, 24 hours
-        .range([0, width]);
+        .scaleLinear()  // Use linear scale instead of time scale
+        .domain([0, 4 * 1440])  // 4 days, each with 1440 minutes
+        // .range([usableArea.left, usableArea.right]);
 
     yScale = d3
         .scaleLinear()
@@ -93,7 +98,10 @@ function createScatterplot(){
     originalXDomain = xScale.domain();
     originalYDomain = yScale.domain();
 
-    const xAxis = d3.axisBottom(xScale).tickFormat(d3.timeFormat("%I:%M %p"));
+    // const xAxis = d3.axisBottom(xScale).tickFormat(d3.timeFormat("%I:%M %p"));
+    const xAxis = d3.axisBottom(xScale)
+        .tickValues([0, 1440, 2880, 4320])  // One tick per day
+        .tickFormat((d, i) => `Day ${i + 1}`);
     const yAxis = d3.axisLeft(yScale);
 
     const xGrid = d3.axisBottom(xScale)
@@ -133,6 +141,13 @@ function createScatterplot(){
         .style("font-weight", "bold");
 
     // X and Y axes
+    // svg.append('g')
+    //     .attr('class', 'x-axis')
+    //     .attr('transform', `translate(0, ${usableArea.bottom})`)
+    //     .call(xAxis)
+    //     .style('stroke-width', 2)
+    //     .style('font-size', 14);
+
     svg.append('g')
         .attr('class', 'x-axis')
         .attr('transform', `translate(0, ${usableArea.bottom})`)
@@ -149,11 +164,16 @@ function createScatterplot(){
 
     const mouseGroups = d3.group(data, d => d.mouse);
 
+    // const line = d3.line()
+    //     .x(d => {
+    //         const timeInMinutes = d.index;
+    //         return xScale(new Date(0, 0, 0, Math.floor(timeInMinutes / 60), timeInMinutes % 60));
+    //     })
+    //     .y(d => yScale(d.temp))
+    //     .defined(d => d.temp !== undefined && d.temp !== null);
+
     const line = d3.line()
-        .x(d => {
-            const timeInMinutes = d.index;
-            return xScale(new Date(0, 0, 0, Math.floor(timeInMinutes / 60), timeInMinutes % 60));
-        })
+        .x(d => xScale(d.index))  // Use index directly (minutes)
         .y(d => yScale(d.temp))
         .defined(d => d.temp !== undefined && d.temp !== null);
     
@@ -240,8 +260,10 @@ function createScatterplot(){
 
         // Calculate min and max time for x-axis
         const times = lineData.map(d => d.index);
-        const minTime = new Date(0, 0, 0, Math.floor(Math.min(...times) / 60), Math.min(...times) % 60);
-        const maxTime = new Date(0, 0, 0, Math.floor(Math.max(...times) / 60), Math.max(...times) % 60);
+        const minTime = Math.min(...times);
+        const maxTime = Math.max(...times); 
+        // const minTime = new Date(0, 0, 0, Math.floor(Math.min(...times) / 60), Math.min(...times) % 60);
+        // const maxTime = new Date(0, 0, 0, Math.floor(Math.max(...times) / 60), Math.max(...times) % 60);
 
         // Update scales
         xScale.domain([minTime, maxTime]);
@@ -251,7 +273,18 @@ function createScatterplot(){
         svg.select('.x-axis')
             .transition()
             .duration(500)
-            .call(d3.axisBottom(xScale).tickFormat(d3.timeFormat("%I:%M %p")));
+            .call(d3.axisBottom(xScale)
+                .tickFormat(d => {
+                    const day = Math.floor(d / (24 * 60)) + 1;
+                    return `Day ${day}`;
+                })
+                .tickValues([0, 1440, 2880, 4320]));  // Only one tick per day
+
+
+        // svg.select('.x-axis')
+        //     .transition()
+        //     .duration(500)
+        //     .call(d3.axisBottom(xScale).tickFormat(d3.timeFormat("%I:%M %p")));
 
         svg.select('.y-axis')
             .transition()
@@ -260,7 +293,8 @@ function createScatterplot(){
 
         // Redraw the line with new scales
         const updatedLine = d3.line()
-            .x(d => xScale(new Date(0, 0, 0, Math.floor(d.index / 60), d.index % 60)))
+            .x(d => xScale(d.index))
+            // .x(d => xScale(new Date(0, 0, 0, Math.floor(d.index / 60), d.index % 60)))
             .y(d => yScale(d.temp));
 
         svg.select(`.line-${mouse}`)
@@ -277,31 +311,33 @@ function createScatterplot(){
             .style('stroke-width', 3)
             .style('stroke-opacity', 0.3)
             .classed('zoomed', false);
-
+    
         // Reset scales
         xScale.domain(originalXDomain);
         yScale.domain(originalYDomain);
-
+    
         // Redraw axes
         svg.select('.x-axis')
             .transition()
             .duration(500)
-            .call(d3.axisBottom(xScale).tickFormat(d3.timeFormat("%I:%M %p")));
-
+            .call(d3.axisBottom(xScale)
+                .tickFormat(d => {
+                    const day = Math.floor(d / (24 * 60)) + 1;
+                    return `Day ${day}`;
+                })
+                .tickValues([0, 1440, 2880, 4320]));  // Only one tick per day
+    
         svg.select('.y-axis')
             .transition()
             .duration(500)
             .call(d3.axisLeft(yScale));
-
+    
         // Redraw all lines with original scales
         const resetLine = d3.line()
-            .x(d => {
-                const timeInMinutes = d.index;
-                return xScale(new Date(0, 0, 0, Math.floor(timeInMinutes / 60), timeInMinutes % 60));
-            })
+            .x(d => xScale(d.index))
             .y(d => yScale(d.temp))
             .defined(d => d.temp !== undefined && d.temp !== null);
-
+    
         mouseGroups.forEach((values, mouse) => {
             svg.select(`.line-${mouse}`)
                 .transition()
@@ -309,4 +345,5 @@ function createScatterplot(){
                 .attr('d', resetLine(values));
         });
     }
+    
 }
