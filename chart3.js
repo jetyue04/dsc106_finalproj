@@ -120,7 +120,8 @@ function createPlot(){
         .attr("transform", `translate(${width / 2}, ${height + margin.bottom - 50})`)
         .style("text-anchor", "middle")
         .text("Day")
-        .style("stroke-width", 5);
+        .style("font-size", "16px")
+        .style("font-weight", "bold");
 
     // y-axis
     svg.append("text")
@@ -129,6 +130,8 @@ function createPlot(){
         .attr("x", 0 - (height / 2))
         .attr("dy", "1em")
         .style("text-anchor", "middle")
+        .style("font-size", "12px")
+        .style("font-weight", "bold")
         .text("Cummulative Distance From Mean(C°)");
 
     // Add invisible overlay for mouse tracking
@@ -192,7 +195,7 @@ function createPlot(){
             tooltip.html(`<strong>Day ${day}</strong><br>` +
                         `Male: ${parseFloat(maleDataPoint.cum_err).toFixed(2)} C°<br>` +
                         `Female: ${parseFloat(femaleDataPoint.cum_err).toFixed(2)} C° <br>` + 
-                        `Percentage: ${parseFloat(femaleDataPoint.cum_err).toFixed(2) / parseFloat(maleDataPoint.cum_err).toFixed(2)} C°`)
+                        `Difference: ${-(parseFloat(femaleDataPoint.cum_err).toFixed(2) - parseFloat(maleDataPoint.cum_err).toFixed(2))} C°`)
                     .style("left", (event.pageX + 15) + "px")
                     .style("top", (event.pageY - 28) + "px");
         }

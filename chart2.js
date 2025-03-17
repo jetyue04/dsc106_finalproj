@@ -98,13 +98,7 @@ function createScatterplot() {
             .text("Distance From Mean (C°)");
 
         // Add chart title
-        svg.append("text")
-            .attr("x", width / 2)
-            .attr("y", 0 - margin.top / 2)
-            .attr("text-anchor", "middle")
-            .style("font-size", "16px")
-            .style("font-weight", "bold")
-            .text("Temperature Deviation by Gender");
+ 
 
         // Add legend
         const legend = svg.append("g")
