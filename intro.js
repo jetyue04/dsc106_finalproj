@@ -219,6 +219,7 @@ function createScatterplot(){
     });
 
     function zoomToLine(lineData, mouse) {
+        // console.log(mouse)
         // Hide all lines
         svg.selectAll('.line')
             .style('display', 'none')
@@ -271,7 +272,76 @@ function createScatterplot(){
             .duration(500)
             .attr('d', updatedLine(lineData));
     }
+    
+    const svgWidth = svg.attr('width');
+    const svgHeight = svg.attr('height');
+
+    // Append a group element for the legend
+    const legend = svg.append('g')
+        .attr('class', 'legend')
+        .attr('transform', `translate(1000, 20)`);
+
+    // Add Male Legend item (lightblue)
+    legend.append('rect')
+        .attr('x', 0)
+        .attr('y', 0)
+        .attr('width', 20)
+        .attr('height', 20)
+        .style('fill', 'lightblue') // Color for Male
+        .style('cursor', 'pointer') // Make it clickable
+        .on('click', () => toggleVisibility('male')); // Toggle visibility on click
+
+    // Add Male label next to the rectangle
+    legend.append('text')
+        .attr('x', 30)
+        .attr('y', 15)
+        .text('Male')
+        .style('cursor', 'pointer')
+        .on('click', () => toggleVisibility('male')); // Toggle visibility on click
+
+    // Add Female Legend item (pink)
+    legend.append('rect')
+        .attr('x', 0)
+        .attr('y', 30)
+        .attr('width', 20)
+        .attr('height', 20)
+        .style('fill', 'pink') // Color for Female
+        .style('cursor', 'pointer') // Make it clickable
+        .on('click', () => toggleVisibility('female')); // Toggle visibility on click
+
+    // Add Female label next to the rectangle
+    legend.append('text')
+        .attr('x', 30)
+        .attr('y', 45)
+        .text('Female')
+        .style('cursor', 'pointer')
+        .on('click', () => toggleVisibility('female')); // Toggle visibility on click
+
+    function toggleVisibility(gender) {
+        // Select lines based on gender prefix (e.g., line-m for male or line-f for female)
+        const genderPrefix = gender === 'male' ? 'm' : 'f';
+
+        // Select all lines that have the gender-specific prefix (e.g., line-m1, line-m2, line-f1, line-f2)
+        const lines = svg.selectAll(`[id^='line-${genderPrefix}']`);
+
+        if (lines.empty()) {
+            console.warn(`No line found with class`);
+            return;
+        }
+    
+        // Toggle visibility for each selected line
+        lines.each(function() {
+            const line = d3.select(this);
+            const isCurrentlyVisible = line.style('display') !== 'none';
+    
+            // Toggle visibility: if visible, hide; if hidden, show
+            line.transition()
+                .duration(500)
+                .style('display', isCurrentlyVisible ? 'none' : 'block');
+        });
+    }
         
+    
 
     function resetZoom() {
         // Show all lines

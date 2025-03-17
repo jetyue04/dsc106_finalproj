@@ -104,10 +104,11 @@ function createScatterplot() {
         const legend = svg.append("g")
             .attr("transform", `translate(${width - 80}, 10)`);
 
-        legend.append("circle")
-            .attr("cx", 10)
-            .attr("cy", 10)
-            .attr("r", 6)
+        legend.append("rect")
+            .attr("x", 4)
+            .attr("y", 4)
+            .attr('width', 10)
+            .attr('height', 10)
             .attr("fill", "#add8e6");
 
         legend.append("text")
@@ -116,11 +117,12 @@ function createScatterplot() {
             .text("Male")
             .attr("fill", "black");
 
-        legend.append("circle")
-            .attr("cx", 10)
-            .attr("cy", 30)
-            .attr("r", 6)
-            .attr("fill", "#FFB6C1");
+        legend.append("rect")
+        .attr("x", 4)
+        .attr("y", 24)
+        .attr('width', 10)
+        .attr('height', 10)
+        .attr("fill", "#FFB6C1");
 
         legend.append("text")
             .attr("x", 20)
