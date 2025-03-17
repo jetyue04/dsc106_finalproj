@@ -156,11 +156,34 @@ function createPlot(){
         .on("mousemove", mousemove);
 
     // Legend
-    svg.append("circle").attr("cx", width - 120).attr("cy", 370).attr("r", 6).style("fill", "lightblue");
-    svg.append("text").attr("x", width - 100).attr("y", 370).text("Male").style("font-size", "15px").attr("alignment-baseline", "middle");
-    svg.append("circle").attr("cx", width - 120).attr("cy", 400).attr("r", 6).style("fill", "lightpink");
-    svg.append("text").attr("x", width - 100).attr("y", 400).text("Female").style("font-size", "15px").attr("alignment-baseline", "middle");
+    const legend = svg.append("g")
+            .attr("transform", `translate(${width - 80}, 10)`);
 
+        legend.append("rect")
+            .attr("x", 4)
+            .attr("y", 384)
+            .attr('width', 10)
+            .attr('height', 10)
+            .attr("fill", "#add8e6");
+
+        legend.append("text")
+            .attr("x", 20)
+            .attr("y", 394)
+            .text("Male")
+            .attr("fill", "black");
+
+        legend.append("rect")
+        .attr("x", 4)
+        .attr("y", 404)
+        .attr('width', 10)
+        .attr('height', 10)
+        .attr("fill", "#FFB6C1");
+
+        legend.append("text")
+            .attr("x", 20)
+            .attr("y", 414)
+            .text("Female")
+            .attr("fill", "black");
     function mousemove(event) {
         const mouseX = d3.pointer(event)[0];
         const invertedX = xScale.invert(mouseX);
