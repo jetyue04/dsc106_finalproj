@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 function createPlot(){ 
     
-    svg = d3.select("#chart3")
+    svg = d3.select("#chart5")
         .append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
@@ -42,7 +42,7 @@ function createPlot(){
         .range([height, 0]);
 
     // Create div for tooltip
-    tooltip = d3.select("#chart3")
+    tooltip = d3.select("#chart5")
         .append("div")
         .attr("class", "tooltip")
         .style("opacity", 0)

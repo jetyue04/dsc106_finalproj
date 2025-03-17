@@ -149,6 +149,53 @@ function createScatterplot(){
         .style('font-size', 14);
 
     const mouseGroups = d3.group(data, d => d.mouse);
+    
+    // Group data by gender
+    const maleData = [];
+    const femaleData = [];
+    
+    // Process the data to separate by gender and prepare for mean calculation
+    mouseGroups.forEach((values, mouse) => {
+        if(mouse.includes('m')) {
+            values.forEach(d => maleData.push({
+                index: parseFloat(d.index),
+                temp: parseFloat(d.temp)
+            }));
+        } else {
+            values.forEach(d => femaleData.push({
+                index: parseFloat(d.index),
+                temp: parseFloat(d.temp)
+            }));
+        }
+    });
+    
+    // Function to calculate mean temperature at each time point
+    function calculateMeanByTimepoint(data) {
+        const groupedByTime = d3.group(data, d => d.index);
+        const meanData = [];
+        
+        groupedByTime.forEach((points, timepoint) => {
+            const validTemps = points
+                .map(p => p.temp)
+                .filter(temp => !isNaN(temp));
+                
+            if(validTemps.length > 0) {
+                const meanTemp = validTemps.reduce((sum, temp) => sum + temp, 0) / validTemps.length;
+                meanData.push({
+                    index: parseFloat(timepoint),
+                    temp: meanTemp
+                });
+            }
+        });
+        
+        // Sort by index to ensure proper line drawing
+        meanData.sort((a, b) => a.index - b.index);
+        return meanData;
+    }
+    
+    // Calculate mean data for males and females
+    const maleMeanData = calculateMeanByTimepoint(maleData);
+    const femaleMeanData = calculateMeanByTimepoint(femaleData);
 
     const line = d3.line()
         .x(d => xScale(d.index))  // Use index directly (minutes)
@@ -166,12 +213,13 @@ function createScatterplot(){
         .style('border-radius', '4px')
         .style('font-size', '14px');
 
+    // Draw individual mouse lines
     mouseGroups.forEach((values, mouse) => {
         let gender = mouse.includes('m') ? 'male' : 'female';
         let color = mouse.includes('m') ? 'lightblue' : 'pink';
         const lineElement = svg.append('path')
             .datum(values)
-            .attr('class', `line line-${mouse}`)
+            .attr('class', `line line-${mouse} ${gender}-line`)
             .attr('d', line)
             .style('fill', 'none')
             .style('stroke', color)
@@ -217,15 +265,40 @@ function createScatterplot(){
                 tooltip.style('visibility', 'hidden');
             });
     });
+    
+    // Draw male mean line
+    svg.append('path')
+        .datum(maleMeanData)
+        .attr('class', 'mean-line male-mean-line')
+        .attr('d', line)
+        .style('fill', 'none')
+        .style('stroke', '#4682B4')  // Darker blue for male mean
+        .style('stroke-width', 4)
+        .style('stroke-dasharray', '0')  // Solid line
+        .style('opacity', 0.8);
+        
+    // Draw female mean line
+    svg.append('path')
+        .datum(femaleMeanData)
+        .attr('class', 'mean-line female-mean-line')
+        .attr('d', line)
+        .style('fill', 'none')
+        .style('stroke', '#E07B89')  // Darker pink/purple for female mean
+        .style('stroke-width', 4)
+        .style('stroke-dasharray', '0')  // Solid line
+        .style('opacity', 0.8);
 
     function zoomToLine(lineData, mouse) {
-        // console.log(mouse)
         // Hide all lines
         svg.selectAll('.line')
             .style('display', 'none')
             .classed('zoomed', false);
+            
+        // Hide mean lines
+        svg.selectAll('.mean-line')
+            .style('display', 'none');
 
-    // Show only the clicked line
+        // Show only the clicked line
         const selectedLine = svg.select(`.line-${mouse}`)
             .style('display', 'block')
             .style('stroke-width', 5)
@@ -299,6 +372,22 @@ function createScatterplot(){
         .style('cursor', 'pointer')
         .on('click', () => toggleVisibility('male')); // Toggle visibility on click
 
+    // Add Male Mean Legend item (blue)
+    legend.append('rect')
+        .attr('x', 0)
+        .attr('y', 60)
+        .attr('width', 20)
+        .attr('height', 20)
+        .style('fill', '#4682B4') // Color for Male Mean
+        .style('cursor', 'pointer'); // Make it clickable
+
+    // Add Male Mean label
+    legend.append('text')
+        .attr('x', 30)
+        .attr('y', 75)
+        .text('Male Mean')
+        .style('cursor', 'pointer');
+
     // Add Female Legend item (pink)
     legend.append('rect')
         .attr('x', 0)
@@ -311,77 +400,217 @@ function createScatterplot(){
 
     // Add Female label next to the rectangle
     legend.append('text')
+    // Add Female label next to the rectangle
+    legend.append('text')
         .attr('x', 30)
         .attr('y', 45)
         .text('Female')
         .style('cursor', 'pointer')
         .on('click', () => toggleVisibility('female')); // Toggle visibility on click
 
+    // Add Female Mean Legend item (darkmagenta)
+    legend.append('rect')
+        .attr('x', 0)
+        .attr('y', 90)
+        .attr('width', 20)
+        .attr('height', 20)
+        .style('fill', '#E07B89') // Color for Female Mean
+        .style('cursor', 'pointer'); // Make it clickable
+
+    // Add Female Mean label
+    legend.append('text')
+        .attr('x', 30)
+        .attr('y', 105)
+        .text('Female Mean')
+        .style('cursor', 'pointer');
+
+    // Function to toggle visibility of mouse lines by gender
     function toggleVisibility(gender) {
-        // Select lines based on gender prefix (e.g., line-m for male or line-f for female)
-        const genderPrefix = gender === 'male' ? 'm' : 'f';
-
-        // Select all lines that have the gender-specific prefix (e.g., line-m1, line-m2, line-f1, line-f2)
-        const lines = svg.selectAll(`[id^='line-${genderPrefix}']`);
-
-        if (lines.empty()) {
-            console.warn(`No line found with class`);
-            return;
-        }
-    
-        // Toggle visibility for each selected line
-        lines.each(function() {
-            const line = d3.select(this);
-            const isCurrentlyVisible = line.style('display') !== 'none';
-    
-            // Toggle visibility: if visible, hide; if hidden, show
-            line.transition()
-                .duration(500)
-                .style('display', isCurrentlyVisible ? 'none' : 'block');
-        });
-    }
+        const currentOpacity = svg.selectAll(`.${gender}-line`).style('stroke-opacity');
+        const newOpacity = currentOpacity === '0.3' ? '0' : '0.3';
         
-    
+        svg.selectAll(`.${gender}-line`)
+            .style('stroke-opacity', newOpacity)
+            .style('display', newOpacity === '0' ? 'none' : 'block');
+            
+        // Also toggle mean lines
+        if (gender === 'male') {
+            const meanLineOpacity = svg.select('.male-mean-line').style('opacity');
+            svg.select('.male-mean-line')
+                .style('opacity', meanLineOpacity === '0.8' ? '0' : '0.8')
+                .style('display', meanLineOpacity === '0.8' ? 'none' : 'block');
+        } else {
+            const meanLineOpacity = svg.select('.female-mean-line').style('opacity');
+            svg.select('.female-mean-line')
+                .style('opacity', meanLineOpacity === '0.8' ? '0' : '0.8')
+                .style('display', meanLineOpacity === '0.8' ? 'none' : 'block');
+        }
+    }
+
+    // Add reset button
+    const resetButton = d3.select('#controls')
+        .append('button')
+        .attr('id', 'reset-zoom')
+        .text('Reset View')
+        .style('margin', '10px')
+        .style('padding', '8px 16px')
+        .style('border-radius', '4px')
+        .style('background-color', '#f0f0f0')
+        .style('border', '1px solid #ccc')
+        .style('cursor', 'pointer')
+        .on('click', resetZoom);
+
+    // Display initial statistics for all mice
+    statsDisplay.html(`
+        <strong>All Mice</strong> <br>
+        <strong>Mean Temperature:</strong> 36.94°C<br>
+        <strong>Standard Deviation:</strong> 0.8°C
+    `);
 
     function resetZoom() {
-        // Show all lines
+        // Show all lines again
         svg.selectAll('.line')
             .style('display', 'block')
-            .style('stroke-width', 3)
             .style('stroke-opacity', 0.3)
-            .classed('zoomed', false);
-    
-        // Reset scales
+            .style('stroke-width', 3)
+            .classed('zoomed', false)
+            .each(function() {
+                const originalColor = d3.select(this).attr('data-color');
+                d3.select(this).style('stroke', originalColor);
+            });
+            
+        // Show mean lines again
+        svg.selectAll('.mean-line')
+            .style('display', 'block')
+            .style('opacity', 0.8);
+
+        // Reset scales to original domains
         xScale.domain(originalXDomain);
         yScale.domain(originalYDomain);
-    
+
         // Redraw axes
         svg.select('.x-axis')
             .transition()
             .duration(500)
             .call(d3.axisBottom(xScale)
-                .tickFormat(d => {
-                    const day = Math.floor(d / (24 * 60)) + 1;
-                    return `Day ${day}`;
-                })
-                .tickValues([0, 1440, 2880, 4320]));  // Only one tick per day
-    
+                .tickValues([0, 1440, 2880, 4320])
+                .tickFormat((d, i) => `Day ${i + 1}`));
+
         svg.select('.y-axis')
             .transition()
             .duration(500)
             .call(d3.axisLeft(yScale));
-    
-        // Redraw all lines with original scales
-        const resetLine = d3.line()
+
+        // Redraw lines with original domains  
+        const updatedLine = d3.line()
             .x(d => xScale(d.index))
             .y(d => yScale(d.temp))
             .defined(d => d.temp !== undefined && d.temp !== null);
-    
+
         mouseGroups.forEach((values, mouse) => {
             svg.select(`.line-${mouse}`)
                 .transition()
                 .duration(500)
-                .attr('d', resetLine(values));
+                .attr('d', updatedLine(values));
         });
+        
+        // Redraw mean lines
+        svg.select('.male-mean-line')
+            .transition()
+            .duration(500)
+            .attr('d', updatedLine(maleMeanData));
+            
+        svg.select('.female-mean-line')
+            .transition()
+            .duration(500)
+            .attr('d', updatedLine(femaleMeanData));
+    }
+    
+    // Add favorite functionality
+    const favoriteButton = d3.select('#controls')
+        .append('button')
+        .attr('id', 'toggle-favorite')
+        .text('Show Favorites Only')
+        .style('margin', '10px')
+        .style('padding', '8px 16px')
+        .style('border-radius', '4px')
+        .style('background-color', '#f0f0f0')
+        .style('border', '1px solid #ccc')
+        .style('cursor', 'pointer')
+        .on('click', toggleFavorites);
+        
+    let showingFavorites = false;
+    
+    function toggleFavorites() {
+        if (!showingFavorites) {
+            // Hide all lines
+            svg.selectAll('.line')
+                .style('display', 'none');
+                
+            // Show only favorite mice
+            data1.forEach(favMouse => {
+                svg.select(`.line-${favMouse.mouse}`)
+                    .style('display', 'block')
+                    .style('stroke-opacity', 0.8)
+                    .style('stroke-width', 4);
+            });
+            
+            // Hide mean lines
+            svg.selectAll('.mean-line')
+                .style('display', 'none');
+                
+            favoriteButton.text('Show All Mice');
+            showingFavorites = true;
+        } else {
+            resetZoom();
+            favoriteButton.text('Show Favorites Only');
+            showingFavorites = false;
+        }
+    }
+    
+    // Add gender filter controls
+    const genderFilter = d3.select('#controls')
+        .append('div')
+        .style('margin', '10px')
+        .style('display', 'inline-block');
+        
+    genderFilter.append('label')
+        .text('Filter by Gender: ')
+        .style('margin-right', '10px');
+        
+    genderFilter.append('label')
+        .text('Male ')
+        .append('input')
+        .attr('type', 'checkbox')
+        .attr('id', 'male-filter')
+        .attr('checked', true)
+        .on('change', updateGenderFilter);
+        
+    genderFilter.append('label')
+        .text(' Female ')
+        .append('input')
+        .attr('type', 'checkbox')
+        .attr('id', 'female-filter')
+        .attr('checked', true)
+        .on('change', updateGenderFilter);
+        
+    function updateGenderFilter() {
+        const showMale = d3.select('#male-filter').property('checked');
+        const showFemale = d3.select('#female-filter').property('checked');
+        
+        // Update male lines visibility
+        svg.selectAll('.male-line')
+            .style('display', showMale ? 'block' : 'none');
+            
+        // Update female lines visibility
+        svg.selectAll('.female-line')
+            .style('display', showFemale ? 'block' : 'none');
+            
+        // Update mean lines
+        svg.select('.male-mean-line')
+            .style('display', showMale ? 'block' : 'none');
+            
+        svg.select('.female-mean-line')
+            .style('display', showFemale ? 'block' : 'none');
     }
 }

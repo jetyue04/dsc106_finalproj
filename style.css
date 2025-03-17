@@ -1,18 +1,15 @@
 body {
-    /* Set line height to 1.5 times the font size
-         and use the OS’s UI font as the website font
-       */
     font: 100%/1.5 system-ui;
     margin-inline: auto;
-    margin-inline: max(1em, (100% - 80ch) / 2);
-
-
+    margin-inline: max(1em, (100% - 120ch) / 2); /* Slightly wider content area */
 }
-center{
+
+center {
     background-color: blue;
     width: 100px;
 }
-H1{
+
+H1 {
     font-size: 30px;
     font-weight: bold;
 }
@@ -21,68 +18,46 @@ dt {
     font-size: 25px;
     font-family: 'Times New Roman', Times, serif;
 }
-.intro{
+
+.intro {
     width: 100%;
 }
-.wrapper{
+
+.wrapper {
     margin-top: 50px;
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    
 }
-#chart{
-    width: 750px;
+
+#chart {
+    width: 80%; /* Change from fixed 750px to 100% */
     margin-top: 1em;
-}
-#chart{
-    width: 750px;
-    margin-top: 1em;
-}
-
-.grid line {
-    stroke: lightgray;
-    stroke-opacity: 0.7;
-    shape-rendering: crispEdges;
-}
-.grid path {
-    stroke-width: 0;
-}
-dl {
-    margin-top: -130px;
-}
-p {
-    margin-top: -15px;
-    font-size: 15px;
-    color: rgb(87, 87, 87);
-    font-family: 'Times New Roman', Times, serif;
-
-}
-.write-up{
-    margin-bottom: 2em;
-    font-size: 15px;
-    font-family: 'Times New Roman', Times, serif;
-}
-#stats-display{
-    background-color: white;
-}
-
-.tooltip {
-    position: absolute;
-    text-align: center;
-    width: auto;
-    height: auto;
-    padding: 5px;
-    font: 12px sans-serif;
-    background: lightsteelblue;
-    border: 0px;
-    border-radius: 8px;
-    pointer-events: none;
-}
-
-#chart{
     margin-bottom: 4em;
+    margin: auto;
 }
 
+/* Charts container - take full width */
+.charts-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 0px;
+    width: 100%; /* Ensure full width */
+}
+
+.chart-box {
+    flex: 1;
+    min-width: 300px;
+    width: 100%; /* Ensure full width within flex container */
+}
+
+#chart2, #chart3 {
+    width: 100%;
+    height: auto; /* Maintain aspect ratio */
+    max-width: 800px; /* Set a maximum width */
+    display: block;
+    margin: 0 auto; /* Center them if needed */
+}
 

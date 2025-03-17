@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class = "home", lang="en">
+<html class="home" lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,49 +8,51 @@
 </head>
 <body>
     <script src="https://d3js.org/d3.v7.min.js"></script>
-    <script src="intro.js", type = 'module' ></script>
-    <script src="chart2.js", type = 'module' ></script>
-    <script src="chart3.js", type = 'module' ></script>
+    <script src="intro.js" type="module"></script>
+    <script src="combined.js" type="module"></script>
 
-    
-    <div class = 'wrapper'>
-        <div class = 'intro'>
-            <H1> Male Mice: More Stable or Sterotype?</H1>
-            <p> An exploration of mice body temperature</p>
+    <div class="wrapper">
+        <div class="intro">
+            <H1>Male Mice: More Stable or Sterotype?</H1>
+            <p>An exploration of mice body temperature</p>
         </div>
-        <img src = './images/mousee.jpg', style="width: 400px; margin: 60px;">
+        <img src="./images/mousee.jpg" style="width: 400px; margin: 60px;">
     </div>
     <p>
-        Historically, female subjects have been excluded from medical research due to the belief that male specimens are generally more stable. While this may be true due to the existence in female estrous cycles, is it really true if we account for this phenomenon? Let’s take a closer look at this concept in a colony of mice.  
+        Historically, female subjects have been excluded from medical research due to the belief that male specimens are generally more stable. While this may be true due to the existence in female estrous cycles, is it really true if we account for this phenomenon? Let's take a closer look at this concept in a colony of mice.  
     </p>
 
-    <h2> A Peek Into the Colony 🐁 </h2>
+    <h2>A Peek Into the Colony 🐁</h2>
     <p>
-        Over 14 days, a group of 26 mice (13 male, 13 feamale) had activity and tempreature levels recorded. Here is a a peek at their tempreature levels averaged over four days. Click on an individual mouse line for more information:
+        Over 14 days, a group of 26 mice (13 male, 13 female) had activity and tempreature levels recorded. Here is a a peek at their tempreature levels averaged over four days. Click on an individual mouse line for more information:
     </p>
-    <div id = 'stats-display'>  
+    <div id="stats-display">  
         <strong>All Mice</strong> <br>
         <strong>Mean Temperature:</strong> 36.94°C<br>
         <strong>Standard Deviation:</strong> 0.8°C
     </div>
     
     <div id="chart"></div>
-    <h2> Distance From the Mean: How Variable are We? 🤔</h2>
+    <h2>Distance From the Mean & Cumulative Variability 🤔</h2>
     <p>
-        Just looking at raw temperatures across all mice, it’s not really clear which group is more variable! Let’s group together the dataset based on gender, taking the mean of all mice in one gender. Let’s also subtract each datapoint by the mean for both groups, shifting means of each curve to 0. 
-    </p>
-    <div id="chart2"></div>
-    <p>
-        It seems that Male mice tend to have more extreme values than female mice!
+        Just looking at raw temperatures across all mice, it's not really clear which group is more variable! Let's group together the dataset based on gender, taking the mean of all mice in one gender. Let's also subtract each datapoint by the mean for both groups, shifting means of each curve to 0. We can examine both the variability at each point and the cumulative variance over time.
     </p>
 
-    
-        
-    </p>
-    <h2>Cummulative Variance 📈</h2>
-    <p>Let's now take a look at the cumulative variance, or the summed values of our second graph. It becomes quite apparent that the variance of male mice diverges much more quickly than female mice. </p>
+    <div class="charts-container">
+        <div class="chart-box">
+            <div class="chart-title">Temperature Variability</div>
+            <div id="chart2"></div>
+        </div>
+        <div class="chart-box">
+            <div class="chart-title">Cumulative Variability</div>
+            <div id="chart3"></div>
+        </div>
+    </div>
 
-    <div id = 'chart3'></div>
-    <p>Female specimens exclusion from research cannot be excused to males possessing less variance. Female specimens tend to show less variability.  </p>
+    <p>
+        It seems that Male mice tend to have more extreme values than female mice! Looking at the cumulative variance, we can see that the variability of male mice diverges much more quickly than female mice over time.
+    </p>
+
+    <p>Female specimens exclusion from research cannot be excused to males possessing less variance. Female specimens tend to show less variability overall.</p>
 </body>
 </html>

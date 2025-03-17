@@ -3,7 +3,7 @@ function createScatterplot() {
         width = 800 - margin.left - margin.right,
         height = 600 - margin.top - margin.bottom;
 
-    const svg = d3.select("#chart2")
+    const svg = d3.select("#chart5")
         .append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
@@ -220,7 +220,7 @@ function createScatterplot() {
             });
     }).catch(error => {
         console.error("Error loading the CSV file:", error);
-        d3.select("#chart2")
+        d3.select("#chart5")
             .append("p")
             .style("color", "red")
             .text("Error loading data. Please check if the file 'data/export_error.csv' exists.");
